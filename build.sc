@@ -129,7 +129,7 @@ class firrtlCrossModule(val crossScalaVersion: String) extends CrossSbtModule wi
           "-o", T.ctx.dest.toString,
           "-lib", antlrSource().path.toString,
           "-package", "firrtl.antlr",
-          "-no-listener", "-visitor",
+          "-listener", "-visitor",
           antlrSource().path.toString
         ).call()
       case _ =>
@@ -137,7 +137,7 @@ class firrtlCrossModule(val crossScalaVersion: String) extends CrossSbtModule wi
           "-o", T.ctx.dest.toString,
           "-lib", antlrSource().path.toString,
           "-package", "firrtl.antlr",
-          "-no-listener", "-visitor",
+          "-listener", "-visitor",
           antlrSource().path.toString
         ).call()
     }
