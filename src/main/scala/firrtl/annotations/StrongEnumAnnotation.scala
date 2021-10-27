@@ -1,4 +1,5 @@
 package firrtl.annotations
+import firrtl.AnnotationSeq
 
 /** An annotation for enum types (rather than enum ''instances'').
   *
@@ -39,4 +40,24 @@ case class EnumComponentAnnotation(target: Named, enumTypeName: String) extends 
 case class EnumVecAnnotation(target: Named, typeName: String, fields: Seq[Seq[String]])
     extends SingleTargetAnnotation[Named] {
   def duplicate(n: Named): EnumVecAnnotation = this.copy(target = n)
+}
+
+object StrongEnumAnnotation {
+  def getEnumComponents(annos: AnnotationSeq): Seq[(CompleteTarget, Map[String, BigInt])] = {
+    val enumDefMap = annos.collect {
+      case EnumDefAnnotation(typeName: String, definition: Map[String, BigInt]) => typeName -> definition
+    }.toMap
+    annos.collect {
+      case EnumComponentAnnotation(target: Named, enumTypeName: String) => target.toTarget -> enumDefMap(enumTypeName)
+    }
+  }
+
+  def getEnumVec(annos: AnnotationSeq): Seq[((CompleteTarget, Seq[Seq[String]]), Map[String, BigInt])] = {
+    val enumDefMap = annos.collect {
+      case EnumDefAnnotation(typeName: String, definition: Map[String, BigInt]) => typeName -> definition
+    }.toMap
+    annos.collect {
+      case EnumVecAnnotation(target: Named, typeName: String, fields: Seq[Seq[String]]) => (target.toTarget, fields) -> enumDefMap(typeName)
+    }
+  }
 }
